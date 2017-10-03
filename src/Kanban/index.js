@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import HTML5Backend from 'react-dnd-html5-backend';
 import withScrolling, { createHorizontalStrength } from 'react-dnd-scrollzone';
@@ -27,9 +28,9 @@ import { DragDropManager } from 'dnd-core';
  *
  * More info: https://github.com/gaearon/react-dnd/issues/186
  */
-const getDndContext = ((dragDropManager = new DragDropManager(HTML5Backend)) => (context) => (
-  context.dragDropManager || dragDropManager
-))();
+const getDndContext = ((
+  dragDropManager = new DragDropManager(HTML5Backend)
+) => context => context.dragDropManager || dragDropManager)();
 
 class Kanban extends PureComponent {
   static propTypes = propTypes;
@@ -51,21 +52,21 @@ class Kanban extends PureComponent {
     overscanListCount: 2,
     overscanRowCount: 2,
     itemCacheKey: ({ id }) => `${id}`,
-  }
+  };
 
   static childContextTypes = {
-    dragDropManager: React.PropTypes.object,
-  }
+    dragDropManager: PropTypes.object,
+  };
 
   static contextTypes = {
-    dragDropManager: React.PropTypes.object,
-  }
+    dragDropManager: PropTypes.object,
+  };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      lists: props.lists
+      lists: props.lists,
     };
 
     this.onMoveList = this.onMoveList.bind(this);
@@ -101,12 +102,12 @@ class Kanban extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({lists: nextProps.lists});
+    this.setState({ lists: nextProps.lists });
   }
 
   onMoveList(from, to) {
     this.setState(
-      (prevState) => ({lists: updateLists(prevState.lists, {from, to})}),
+      prevState => ({ lists: updateLists(prevState.lists, { from, to }) }),
       () => {
         const lists = this.state.lists;
 
@@ -122,22 +123,22 @@ class Kanban extends PureComponent {
   onMoveRow(from, to) {
     console.count('onMoveRow');
     this.setState(
-      (prevState) => {
+      prevState => {
         console.time('updateLists');
-        const nextState = {lists: updateLists(prevState.lists, {from, to})};
+        const nextState = { lists: updateLists(prevState.lists, { from, to }) };
         console.timeEnd('updateLists');
 
         return nextState;
       },
       () => {
-          const lists = this.state.lists;
+        const lists = this.state.lists;
 
-          this.props.onMoveRow({
-            itemId: from.itemId,
-            listId: findItemListId(lists, from.itemId),
-            itemIndex: findItemIndex(lists, from.itemId),
-            listIndex: findItemListIndex(lists, from.itemId),
-            lists: lists,
+        this.props.onMoveRow({
+          itemId: from.itemId,
+          listId: findItemListId(lists, from.itemId),
+          itemIndex: findItemIndex(lists, from.itemId),
+          listIndex: findItemListIndex(lists, from.itemId),
+          lists: lists,
         });
       }
     );
@@ -160,7 +161,7 @@ class Kanban extends PureComponent {
       rowIndex: findItemIndex(lists, itemId),
       listIndex: findItemListIndex(lists, itemId),
       lists,
-    }
+    };
   }
 
   listEndData({ listId }) {
@@ -204,7 +205,7 @@ class Kanban extends PureComponent {
   renderList(list, columnIndex) {
     return (
       <SortableList
-        ref={ref => this.refsByIndex[columnIndex] = ref}
+        ref={ref => (this.refsByIndex[columnIndex] = ref)}
         key={list.id}
         listId={list.id}
         listStyle={{}}
@@ -242,8 +243,8 @@ class Kanban extends PureComponent {
     return (
       <div
         className="KanbanGrid"
-        style={{pointerEvents: 'auto'}}
-        ref={(c) => (this._grid = c)}
+        style={{ pointerEvents: 'auto' }}
+        ref={c => (this._grid = c)}
       >
         {lists.map(this.renderList)}
         <DragLayer
